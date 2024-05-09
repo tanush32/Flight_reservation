@@ -1,6 +1,3 @@
 a=5
-print(a)adda
-jhbj
-jcsbucbsjch
-csbhcvsmcn sv
-svhscbsdjhcvs
+print(a)
+print("Thilak Chandru S")
