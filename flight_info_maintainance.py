@@ -1,3 +1,31 @@
+class compartment_node:
+    def __init__(self,name):
+        self.compartment_name=name
+        self.aisle=1
+        self.window=1
+        self.middle=1
+        self.next=None
+    
+class compartment_list:
+    def __init__(self):
+        self.head=None
+    def generate_compartment(self,no_of_compartments):
+        while no_of_compartments>0:
+            x=65
+            compartment=compartment_node(chr(x))
+            if self.head is None:
+                self.head=compartment
+            else:
+                current_compartment=self.head
+                while(current_compartment.next):
+                    current_compartment=current_compartment.next
+                current_compartment.next=compartment
+            x=x+1
+            no_of_compartments=no_of_compartments-1
+
+
+
+
 class node:
     def __init__(self,state):
         self.state=state
@@ -23,7 +51,7 @@ class flight_info:
             n.left = cur   
             n.right = None
 
-    def insert_flight(self, state, name, path, a_time, d_time, unit_price):
+    def insert_flight(self, state, name, path, a_time, d_time, unit_price,no_of_compartments):
         if len(path) == 0:
             return 
         
@@ -38,6 +66,7 @@ class flight_info:
                     cur.flight[name]["a_time"] = a_time
                     cur.flight[name]["d_time"] = d_time
                     cur.flight[name]["unit_price"] = unit_price
+                    cur.flight[name]["no_of_compartments"]=compartment_list().generate_compartment(no_of_compartments)
                 break
             cur = cur.right
         
