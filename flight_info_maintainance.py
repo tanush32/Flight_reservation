@@ -23,6 +23,22 @@ class compartment_list:
             x=x+1
             no_of_compartments=no_of_compartments-1
 
+    def seat_booking(self):
+        self.display_compartment_availability()
+        print()
+        print("Select the seat you want to book : ")
+        print()
+
+
+
+    def display_compartment_availability(self):
+        cur = self.head
+        while cur :
+            print(cur.compartment_name)
+            print(" aisle - ",cur.aisle," Window - ",cur.window,"Middle - ",cur.middle)
+            print("--------------------------------------------------------------------")
+            cur=cur.next
+        print()    
 
 
 
@@ -72,7 +88,7 @@ class flight_info:
         
         # Recursive call for next state in the path
         if len(path) > 2:
-            self.insert_flight(path[1], name, path[1:], a_time[1:], a_time[1], unit_price)
+            self.insert_flight(path[1], name, path[1:], a_time[1:], a_time[1], unit_price,no_of_compartments)
 
     def display(self):
         cur = self.root
@@ -87,8 +103,8 @@ flight = flight_info()
 flight.insert_state("s1")
 flight.insert_state("s2")
 flight.insert_state("s3")
-flight.insert_flight("s1","King_fisher",["s1","s2","s3"],[2,3],1,200)
-flight.insert_flight("s1","Queen_fisher",["s1","s3","s2"],[3,4],1,400)
+flight.insert_flight("s1","King_fisher",["s1","s2","s3"],[2,3],1,200,5)
+flight.insert_flight("s1","Queen_fisher",["s1","s3","s2"],[3,4],1,400,4)
 flight.display()
             
 
