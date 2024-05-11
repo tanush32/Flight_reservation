@@ -23,31 +23,35 @@ class flight_info:
             n.left = cur   
             n.right = None
 
-    def insert_flight(self,state,name,path,a_time,d_time,unit_price):
+    def insert_flight(self, state, name, path, a_time, d_time, unit_price):
+        if len(path) == 0:
+            return 
+        
+        # Find the node for the current state
         cur = self.root
-        flag=0
         while cur:
-            if cur.state == state :
-                if len(path)>=3:
-                    cur.flight["name"]=name
-                    cur.flight["path"]=path
-                    cur.flight["a_time"]=a_time
-                    cur.flight["d_time"]=d_time
-                    cur.flight["unit_price"]=unit_price
-                else:
-                    return  
-
-            cur=cur.right
-             
-        self.insert_flight(path[1],name,path[1:],a_time[1:],a_time[0],unit_price)
-
+            if cur.state == state:
+                if len(path) >= 2:
+                     # Store flight information for the first state in the path
+                    cur.flight[name]={}
+                    cur.flight[name]["path"] = path
+                    cur.flight[name]["a_time"] = a_time
+                    cur.flight[name]["d_time"] = d_time
+                    cur.flight[name]["unit_price"] = unit_price
+                break
+            cur = cur.right
+        
+        # Recursive call for next state in the path
+        if len(path) > 2:
+            self.insert_flight(path[1], name, path[1:], a_time[1:], a_time[1], unit_price)
 
     def display(self):
         cur = self.root
         while cur:
-            print(cur.state,cur.flight)   
+            print(cur.state, cur.flight)   
             print() 
             cur = cur.right
+
 
 
 flight = flight_info()
@@ -55,6 +59,7 @@ flight.insert_state("s1")
 flight.insert_state("s2")
 flight.insert_state("s3")
 flight.insert_flight("s1","King_fisher",["s1","s2","s3"],[2,3],1,200)
+flight.insert_flight("s1","Queen_fisher",["s1","s3","s2"],[3,4],1,400)
 flight.display()
             
 
