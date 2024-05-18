@@ -11,8 +11,8 @@ class compartment_list:
     def __init__(self):
         self.head=None
     def generate_compartment(self,no_of_compartments):
+        x=65
         while no_of_compartments>0:
-            x=65
             compartment=compartment_node(chr(x))
             if self.head is None:
                 self.head=compartment
@@ -24,22 +24,65 @@ class compartment_list:
             x=x+1
             no_of_compartments=no_of_compartments-1
 
-    def seat_booking(self):
-        self.display_compartment_availability()
-        print()
-        print("Select the seat you want to book : ")
-        print()
-        
+
+
+    def check_seat_avalability(self):
+        cur = self.head
+        flag=0       #to check is there seat to book or it is full 
+        while cur:
+            if cur.aisle==1 or cur.middle==1 or cur.window==1:
+                flag=1
+            cur=cur.next
+        if flag==0:
+            return 0
+        else:
+            return 1
+            
+    def reserve_seat(self):
+            if self.check_seat_avalability()==1:
+                print("Select your seat")
+                self.display_compartment_availability()
+
+                #getting seat info to book
+                required_compartment = input("Enter the compartment name : ")
+                print("Enter 1-Window   2-Middle   3-aisle")
+                seat=int(input())
+
+
+                cur=self.head
+                while cur:
+                    if cur.compartment_name==required_compartment:
+                        if seat==1:
+                            cur.window=0 
+                            print("Seat reserved successfully!!!")
+                            return   
+                        elif seat==2:
+                            cur.middle=0
+                            print("Seat reserved successfully!!!")
+                            return
+                        else:
+                            cur.aisle=0
+                            print("Seat reserved successfully!!!")
+                            return
+                    cur=cur.next
+            else:
+                print("Sorry ticket not available!!!")
+                return
+            
 
 
     def display_compartment_availability(self):
         cur = self.head
+        print("-------------SEAT AVAILABILITY-------------------")
         while cur :
             print(cur.compartment_name)
-            print(" aisle - ",cur.aisle," Window - ",cur.window,"Middle - ",cur.middle)
+            print(" aisle - ",cur.aisle,"  Window - ",cur.window,"  Middle - ",cur.middle)
             print("--------------------------------------------------------------------")
             cur=cur.next
-        print()    
+        print("END")    
+        print()
+        print()
+
 
 
 
@@ -68,7 +111,9 @@ class flight_info:
             n.left = cur   
             n.right = None
 
-    def insert_flight(self, state, name, path, a_time, d_time, unit_price,no_of_compartments):
+    def insert_flight(self, state, name, path, a_time, d_time, unit_price,no_of_compartments,whole_route):
+        c=compartment_list()
+        c.generate_compartment(no_of_compartments)
         if len(path) == 0:
             return 
         
@@ -83,15 +128,14 @@ class flight_info:
                     cur.flight[name]["a_time"] = a_time
                     cur.flight[name]["d_time"] = d_time
                     cur.flight[name]["unit_price"] = unit_price
-                    compartment=compartment_list()
-                    compartment.generate_compartment(no_of_compartments)
-                    cur.flight[name]["no_of_compartments"]=compartment.head
+                    cur.flight[name]["compartments_list"]=c                              #object of compartment class
+                    cur.flight[name]["all_flight_routes"]=whole_route                    #graph object
                 break
             cur = cur.right
         
         # Recursive call for next state in the path
         if len(path) > 2:
-            self.insert_flight(path[1], name, path[1:], a_time[1:], a_time[1], unit_price,no_of_compartments)
+            self.insert_flight(path[1], name, path[1:], a_time[1:], a_time[1], unit_price,no_of_compartments,whole_route)
 
 
 
@@ -127,11 +171,32 @@ class flight_info:
             cur = cur.right
 
         return fastest_flight
+    
+    #booking the fastest flight 
+    def book_ticket(self,start,end,g):
+        cur=self.root
+        fastest_flight=self.find_fastest(start,end,g)
+        flag=0
+        temp = None
+        while cur :
+            if flag==0:
+                for flight_name,details in cur.flight.items():
+                    if flight_name == fastest_flight:
+                        temp = details["compartments_list"]                        
+
+                        #booking ticket
+                        temp.reserve_seat()
+                        flag=1
+                        break
+            else:
+                break        
+            cur=cur.right
+
+        
+        
+             
+
                                 
-
-
-
-
 class graph :
     def __init__(self,verts):
         self.verts=verts
@@ -171,7 +236,10 @@ flight = flight_info()
 flight.insert_state(0)
 flight.insert_state(1)
 flight.insert_state(2)
-flight.insert_flight(0,"King_fisher",[0,1,2],[2,3],1,200,5)
-flight.insert_flight(0,"Queen_fisher",[0,2,1],[3,4],1,400,4)
+flight.insert_flight(0,"King_fisher",[0,1,2],[2,3],1,200,3,g)
+flight.insert_flight(0,"Queen_fisher",[0,2,1],[3,4],1,400,2,g)
 flight.display()
-print(flight.find_fastest(0,2,g))
+print("Flihgt name : ",flight.find_fastest(0,2,g))
+print()
+flight.book_ticket(0,2,g)
+flight.book_ticket(0,2,g)
