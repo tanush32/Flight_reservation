@@ -260,4 +260,4 @@ print("Flihgt name : ",flight.find_fastest(0,2,g))
 print()
 for i in range(10):
     flight.book_ticket(0,2,g)
-
+print()
