@@ -38,8 +38,12 @@ class compartment_list:
         else:
             return 1
             
-    def reserve_seat(self):
+    def reserve_seat(self,flight_name,fastest_flight):
             if self.check_seat_avalability()==1:
+                if flight_name==fastest_flight:
+                    print("Flihgt Name : ",flight_name,"    (FASTEST)")
+                else:
+                    print("Flihgt Name : ",flight_name)
                 print("Select your seat")
                 self.display_compartment_availability()
 
@@ -55,19 +59,18 @@ class compartment_list:
                         if seat==1:
                             cur.window=0 
                             print("Seat reserved successfully!!!")
-                            return   
+                            return 1
                         elif seat==2:
                             cur.middle=0
                             print("Seat reserved successfully!!!")
-                            return
+                            return 1
                         else:
                             cur.aisle=0
                             print("Seat reserved successfully!!!")
-                            return
+                            return 1
                     cur=cur.next
             else:
-                print("Sorry ticket not available!!!")
-                return
+                return 0
             
 
 
@@ -177,20 +180,34 @@ class flight_info:
         cur=self.root
         fastest_flight=self.find_fastest(start,end,g)
         flag=0
-        temp = None
+        all_flight = []
+        all_flight_name=[]
         while cur :
-            if flag==0:
                 for flight_name,details in cur.flight.items():
-                    if flight_name == fastest_flight:
-                        temp = details["compartments_list"]                        
+                    if (start in details["path"]) and (end in details["path"]):
 
-                        #booking ticket
-                        temp.reserve_seat()
-                        flag=1
-                        break
+                        #list of all the flights that are available
+                        if flight_name==fastest_flight:
+                            temp=[details["compartments_list"]]
+                            all_flight = temp + all_flight
+                            all_flight_name = [flight_name] + all_flight_name
+                        else:   
+
+                            all_flight.append(details["compartments_list"])  
+                            all_flight_name.append(flight_name)             
+                              
+                cur=cur.right
+
+        flag=0
+        for i in range(len(all_flight)):
+            flag=all_flight[i].reserve_seat(all_flight_name[i],fastest_flight)
+            if flag==1:
+                break
             else:
-                break        
-            cur=cur.right
+                continue
+        if flag==0:
+            print("Sorry ticket not available!!!") 
+            return            
 
         
         
@@ -241,5 +258,6 @@ flight.insert_flight(0,"Queen_fisher",[0,2,1],[3,4],1,400,2,g)
 flight.display()
 print("Flihgt name : ",flight.find_fastest(0,2,g))
 print()
-flight.book_ticket(0,2,g)
-flight.book_ticket(0,2,g)
+for i in range(10):
+    flight.book_ticket(0,2,g)
+
