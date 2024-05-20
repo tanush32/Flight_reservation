@@ -42,7 +42,7 @@ class compartment_list:
             if self.check_seat_avalability()==1:
                 if flight_name==fastest_flight:
                     print("Flihgt Name : ",flight_name,"    (FASTEST)")
-                else:
+                else: 
                     print("Flihgt Name : ",flight_name)
                 print("Select your seat")
                 self.display_compartment_availability()
@@ -59,18 +59,18 @@ class compartment_list:
                         if seat==1:
                             cur.window=0 
                             print("Seat reserved successfully!!!")
-                            return 1
+                            return "window",required_compartment,flight_name
                         elif seat==2:
                             cur.middle=0
                             print("Seat reserved successfully!!!")
-                            return 1
+                            return "Middle",required_compartment,flight_name
                         else:
                             cur.aisle=0
                             print("Seat reserved successfully!!!")
-                            return 1
+                            return "aisle",required_compartment,flight_name
                     cur=cur.next
             else:
-                return 0
+                return 0,0,0
             
 
 
@@ -149,6 +149,14 @@ class flight_info:
             print() 
             cur = cur.right
 
+    def current_status(self,flight_name,start,end):
+        cur=self.root
+        while cur:
+            if cur.state==start:
+                flight_status = cur.flight[flight_name]["compartments_list"]
+                flight_status.display_compartment_availability()
+            cur=cur.right        
+
     def find_fastest(self, start, end, obj):
         cur = self.root
         min_time = float('inf')
@@ -173,12 +181,12 @@ class flight_info:
                             fastest_flight = flight_name
             cur = cur.right
 
-        return fastest_flight
+        return fastest_flight,min_time
     
     #booking the fastest flight 
     def book_ticket(self,start,end,g):
         cur=self.root
-        fastest_flight=self.find_fastest(start,end,g)
+        fastest_flight,distance=self.find_fastest(start,end,g)
         flag=0
         all_flight = []
         all_flight_name=[]
@@ -191,27 +199,47 @@ class flight_info:
                             temp=[details["compartments_list"]]
                             all_flight = temp + all_flight
                             all_flight_name = [flight_name] + all_flight_name
-                        else:   
-
+                        else:  
                             all_flight.append(details["compartments_list"])  
                             all_flight_name.append(flight_name)             
                               
                 cur=cur.right
 
-        flag=0
+        booked_seat=0
         for i in range(len(all_flight)):
-            flag=all_flight[i].reserve_seat(all_flight_name[i],fastest_flight)
-            if flag==1:
-                break
+            booked_seat,booked_compartment,booked_flight_name = all_flight[i].reserve_seat(all_flight_name[i],fastest_flight)
+            if booked_seat!=0:
+                choice = input("Do you want to generate bill ? (y / n)")
+                if choice=="y":
+                    print("-------------------------BILL--------------------------------------")
+                    self.generate_bill(booked_seat,booked_compartment,booked_flight_name,start,end,distance)
+                    print("-------------------------------------------------------------------")
+                    break
             else:
                 continue
-        if flag==0:
+        if booked_seat==0:
             print("Sorry ticket not available!!!") 
-            return            
+            return     
+        
+    def generate_bill(self,booked_seat,booked_compartment,booked_flight_name,start,end,distance):
+        print("Flight name : ", booked_flight_name)
+        print("Compartment : ", booked_compartment)
+        print("Booked Seat : ",booked_seat)
+        print("origin : ",start)
+        print("Destination : ",end) 
+        cur=self.root
+        while cur:
+            if cur.state==start:
+                print("Route : ",cur.flight[booked_flight_name]["path"])
+                print("Price : Rs ",cur.flight[booked_flight_name]["unit_price"]*(distance))
+                break
+            cur=cur.right
+        return 1        
 
         
-        
-             
+    
+
+                     
 
                                 
 class graph :
@@ -260,4 +288,5 @@ print("Flihgt name : ",flight.find_fastest(0,2,g))
 print()
 for i in range(10):
     flight.book_ticket(0,2,g)
+flight.current_status("King_fisher",0,2)
 print()
