@@ -143,11 +143,18 @@ class flight_info:
 
 
     def display(self):
-        cur = self.root
-        while cur:
-            print(cur.state, cur.flight)   
-            print() 
-            cur = cur.right
+            cur = self.root
+            while cur:
+                print(f"State: {cur.state}")
+                for flight_name, details in cur.flight.items():
+                    print(f"  Flight Name: {flight_name}")
+                    print(f"    Path: {details['path']}")
+                    print(f"    Arrival Time: {details['a_time']}")
+                    print(f"    Departure Time: {details['d_time']}")
+                    print(f"    Unit Price: {details['unit_price']}")
+                    print(f"    Compartments List: {details['compartments_list']}")
+                print()
+                cur = cur.right
 
     def current_status(self,flight_name,start,end):
         cur=self.root
