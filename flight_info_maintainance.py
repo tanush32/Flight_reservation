@@ -10,7 +10,7 @@ class compartment_node:
 class compartment_list:
     def __init__(self):
         self.head=None
-    def generate_compartment(self,no_of_compartments): #O(n)
+    def generate_compartment(self,no_of_compartments):
         x=65
         while no_of_compartments>0:
             compartment=compartment_node(chr(x))
@@ -26,7 +26,7 @@ class compartment_list:
 
 
 
-    def check_seat_avalability(self):   #O(n)
+    def check_seat_avalability(self):
         cur = self.head
         flag=0       #to check is there seat to book or it is full 
         while cur:
@@ -38,7 +38,7 @@ class compartment_list:
         else:
             return 1
             
-    def reserve_seat(self,flight_name,fastest_flight):  #O(n)
+    def reserve_seat(self,flight_name,fastest_flight):
             if self.check_seat_avalability()==1:
                 if flight_name==fastest_flight:
                     print("Flihgt Name : ",flight_name,"    (FASTEST)")
@@ -74,7 +74,7 @@ class compartment_list:
             
 
 
-    def display_compartment_availability(self): #O(n)
+    def display_compartment_availability(self):
         cur = self.head
         print("-------------SEAT AVAILABILITY-------------------")
         while cur :
@@ -114,7 +114,7 @@ class flight_info:
             n.left = cur   
             n.right = None
 
-    def insert_flight(self, state, name, path, a_time, d_time, unit_price,no_of_compartments,whole_route):  #O(n)
+    def insert_flight(self, state, name, path, a_time, d_time, unit_price,no_of_compartments,whole_route):
         c=compartment_list()
         c.generate_compartment(no_of_compartments)
         if len(path) == 0:
@@ -143,18 +143,18 @@ class flight_info:
 
 
     def display(self):
-            cur = self.root
-            while cur:
-                print(f"State: {cur.state}")
-                for flight_name, details in cur.flight.items():
-                    print(f"  Flight Name: {flight_name}")
-                    print(f"    Path: {details['path']}")
-                    print(f"    Arrival Time: {details['a_time']}")
-                    print(f"    Departure Time: {details['d_time']}")
-                    print(f"    Unit Price: {details['unit_price']}")
-                    print(f"    Compartments List: {details['compartments_list']}")
-                print()
-                cur = cur.right
+        cur = self.root
+        while cur:
+            print(f"State: {cur.state}")
+            for flight_name, details in cur.flight.items():
+                print(f"  Flight Name: {flight_name}")
+                print(f"    Path: {details['path']}")
+                print(f"    Arrival Time: {details['a_time']}")
+                print(f"    Departure Time: {details['d_time']}")
+                print(f"    Unit Price: {details['unit_price']}")
+                print(f"    Compartments List: {details['compartments_list']}")
+            print()
+            cur = cur.right
 
     def current_status(self,flight_name,start,end):
         cur=self.root
@@ -164,7 +164,7 @@ class flight_info:
                 flight_status.display_compartment_availability()
             cur=cur.right        
 
-    def find_fastest(self, start, end, obj): #O(n³)
+    def find_fastest(self, start, end, obj):
         cur = self.root
         min_time = float('inf')
         fastest_flight = None
@@ -191,7 +191,7 @@ class flight_info:
         return fastest_flight,min_time
     
     #booking the fastest flight 
-    def book_ticket(self,start,end,g): #O(n²)
+    def book_ticket(self,start,end,g):
         cur=self.root
         fastest_flight,distance=self.find_fastest(start,end,g)
         flag=0
@@ -228,7 +228,7 @@ class flight_info:
             print("Sorry ticket not available!!!") 
             return     
         
-    def generate_bill(self,booked_seat,booked_compartment,booked_flight_name,start,end,distance):  #O(n)
+    def generate_bill(self,booked_seat,booked_compartment,booked_flight_name,start,end,distance):
         print("Flight name : ", booked_flight_name)
         print("Compartment : ", booked_compartment)
         print("Booked Seat : ",booked_seat)
@@ -254,22 +254,22 @@ class graph :
         self.verts=verts
         self.graph=[[float('inf') for i in range(verts)] for j in range(verts)]
 
-    def size(self): #O(1)
+    def size(self):
         return self.verts
     
     #displaying the distance info     
-    def display(self):  #O(1)
+    def display(self):
         for i in self.graph:
             print(i)
 
     #updating the distance between two states
-    def add_edges(self,vertex1,vertex2,weight): #O(1)
+    def add_edges(self,vertex1,vertex2,weight):
         print("Add edge ",vertex1," to ",vertex2)
         self.graph[vertex1][vertex2]=weight
         self.graph[vertex2][vertex1]=weight
 
     #addind state
-    def add_vertex(self): #O(n)
+    def add_vertex(self):
         self.verts+=1
         for i in range(self.verts-1):
             self.graph[i].append(0)
@@ -291,7 +291,7 @@ flight.insert_state(2)
 flight.insert_flight(0,"King_fisher",[0,1,2],[2,3],1,200,3,g)
 flight.insert_flight(0,"Queen_fisher",[0,2,1],[3,4],1,400,2,g)
 flight.display()
-print("Flihgt name : ",flight.find_fastest(0,2,g))
+print("Flight name : ",flight.find_fastest(0,2,g))
 print()
 for i in range(10):
     flight.book_ticket(0,2,g)
